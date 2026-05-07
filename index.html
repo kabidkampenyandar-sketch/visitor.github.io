@@ -199,6 +199,86 @@
       background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
     }
 
+    /* Note section */
+    .note-section {
+      margin-top: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      border-radius: 10px;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .note-title {
+      font-size: 12px;
+      color: #333;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .note-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      padding: 8px 12px;
+      background: white;
+      border-radius: 20px;
+      font-size: 11px;
+      color: white;
+      border: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge-senin {
+      background: #0f4989;
+    }
+
+    .badge-selasa {
+      background: #ff0000;
+    }
+
+    .badge-rabu {
+      background: #00bf63;
+    }
+
+    .badge-kamis {
+      background: #ff00cf;
+    }
+
+    .badge-jumat {
+      background: #891b92;
+    }
+
+    .badge-sabtu {
+      background: #fdff00;
+    }
+
+    .badge-minggu {
+      background: #676767;
+    }
+
+    .badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: inherit;
+    }
+
+    .note-info {
+      font-size: 11px;
+      color: #666;
+      margin: 0;
+    }
+
     /* A4 Print section */
     @page {
       size: A4;
@@ -268,7 +348,7 @@
     .date {
       top: 85%;
       color: black;
-      font-size: 18px;
+      font-size: 20px;
     }
 
     @media print {
@@ -319,6 +399,15 @@
       .button-group {
         flex-direction: column;
       }
+
+      .note-badges {
+        gap: 6px;
+      }
+
+      .badge {
+        padding: 6px 10px;
+        font-size: 10px;
+      }
     }
   </style>
 </head>
@@ -364,6 +453,21 @@
         <button class="btn-generate" onclick="generate()">Generate</button>
         <button class="btn-print" onclick="window.print()">Print</button>
       </div>
+
+      <!-- Note Section -->
+      <div class="note-section">
+        <p class="note-title">📋 Keterangan Desain Kartu:</p>
+        <div class="note-badges">
+          <span class="badge badge-senin">Senin</span>
+          <span class="badge badge-selasa">Selasa</span>
+          <span class="badge badge-rabu">Rabu</span>
+          <span class="badge badge-kamis">Kamis</span>
+          <span class="badge badge-jumat">Jumat</span>
+          <span class="badge badge-sabtu">Sabtu</span>
+          <span class="badge badge-minggu">Minggu</span>
+        </div>
+        <p class="note-info">✓ Desain kartu akan otomatis menyesuaikan dengan hari dari tanggal berakhir</p>
+      </div>
     </div>
   </div>
 
@@ -379,6 +483,25 @@
       return `s.d ${day}-${month}-${year}`;
     }
 
+    function getDesignByDay(dateString) {
+      if (!dateString) return 'design.png';
+      
+      const date = new Date(dateString);
+      const dayOfWeek = date.getDay();
+      
+      const designs = {
+        0: 'minggu.png',
+        1: 'senin.png',
+        2: 'selasa.png',
+        3: 'rabu.png',
+        4: 'kamis.png',
+        5: 'jumat.png',
+        6: 'sabtu.png'
+      };
+      
+      return designs[dayOfWeek];
+    }
+
     function generate() {
       const company = document.getElementById('company').value;
       const end = document.getElementById('end').value;
@@ -391,6 +514,7 @@
       let currentPage;
 
       const endFormatted = formatDate(end);
+      const designImage = getDesignByDay(end);
 
       for (let i = 0; i < jumlah; i++) {
         if (i % 4 === 0) {
@@ -405,7 +529,7 @@
         const numberText = `UPBU.JWT.${String(nomor).padStart(3, '0')}`;
 
         card.innerHTML = `
-          <img src="design.png" class="bg">
+          <img src="${designImage}" class="bg">
           <div class="text number">${numberText}</div>
           <div class="text company">${company}</div>
           <div class="text date">${endFormatted}</div>
